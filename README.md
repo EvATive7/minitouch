@@ -1,8 +1,14 @@
 # minitouch
 
+> [!Note]  
+> This project is minitouch's EvATive7 fork version, designed to optimize its performance and improve interaction.  
+> It has additional protocols.
+
 Minitouch provides a socket interface for triggering multitouch events and gestures on Android devices. It works without root if started via [ADB](http://developer.android.com/tools/help/adb.html) on at least SDK 25 and lower, though any version should work. The sole exception is SDK 20 (Android Wear), which does require root. The lowest SDK level we test is 10 (i.e. Android 2.3.3).
 
 It works especially well with HTML5 multitouch events, and unlike the Android [monkey](http://developer.android.com/tools/help/monkey.html) tool, allows you to access the whole screen (including any software buttons).
+
+Forked from [minitouch](https://github.com/DeviceFarmer/minitouch), the origin project is under Apache License 2.0.
 
 ## Building
 
@@ -118,6 +124,21 @@ It's also very important to note that the maximum X and Y coordinates may, but u
 Example output: `$ 9876`
 
 This is the pid of the minitouch process. Useful if you want to kill the process.
+
+#### `jlog <json>`
+
+Example output: `jlog {"st": 1743756182000.452, "et": 1743756182000.462, "c": 0.010, "cmd": "c"}`
+
+Log of execution of commands, used to view specific details of command execution.  
+**Restricted protocol for EvATive7 version**
+
+#### `ctx <status>`
+
+Example output: `ctx est`
+Example output: `ctx cls`
+
+Notification of connection context, export to stdio only.  
+**Restricted protocol for EvATive7 version**
 
 ### Writable to the socket
 

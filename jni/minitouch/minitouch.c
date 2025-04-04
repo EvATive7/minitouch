@@ -11,6 +11,7 @@
 #include <sys/types.h>
 #include <sys/un.h>
 #include <unistd.h>
+#include <time.h>
 
 #include <libevdev.h>
 
@@ -19,6 +20,15 @@
 #define DEFAULT_SOCKET_NAME "minitouch"
 
 static int g_verbose = 0;
+
+/* Gets the current millisecond timestamp */
+static double get_ts()
+{
+  struct timespec ts;
+  clock_gettime(CLOCK_REALTIME, &ts);
+  double milliseconds = ts.tv_sec * 1000.0 + ts.tv_nsec / 1000000.0;
+  return milliseconds;
+}
 
 static void usage(const char* pname)
 {
@@ -694,8 +704,14 @@ static void io_handler(FILE* input, FILE* output, internal_state_t* state)
 
   while (fgets(read_buffer, sizeof(read_buffer), input) != NULL)
   {
+    double ts_start = get_ts();
+
     read_buffer[strcspn(read_buffer, "\r\n")] = 0;
     parse_input(read_buffer, state);
+
+    double ts_end = get_ts();
+    double cost = ts_end - ts_start;
+    fprintf(output, "jlog {\"st\": %.3f, \"et\": %.3f, \"c\": %.3f, \"cmd\": \"%s\"}\n", ts_start, ts_end, cost, read_buffer);
   }
 }
 
@@ -957,7 +973,7 @@ int main(int argc, char* argv[])
       exit(1);
     }
 
-    fprintf(stderr, "Connection established\n");
+    fprintf(stderr, "ctx est\n");
 
     input = fdopen(client_fd, "r");
     if (input == NULL)
@@ -979,7 +995,7 @@ int main(int argc, char* argv[])
       io_handler(input, output, &state);
     }
 
-    fprintf(stderr, "Connection closed\n");
+    fprintf(stderr, "ctx cls\n");
     fclose(input);
     fclose(output);
     close(client_fd);
